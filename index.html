@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krishna Praveen Kasilingam — Embedded Systems Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --accent: #00e5ff;
+    --accent2: #7b61ff;
+    --accent3: #ff6b35;
+    --text: #e8e8f0;
+    --text-dim: #888899;
+    --border: rgba(0,229,255,0.15);
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease, width 0.2s, height 0.2s;
+    opacity: 0.5;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 4rem;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.25s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 8rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+    top: 10%; left: -10%;
+    pointer-events: none;
+  }
+  .hero-glow2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(123,97,255,0.1) 0%, transparent 70%);
+    bottom: 10%; right: 5%;
+    pointer-events: none;
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 900px; }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.35s forwards;
+  }
+  h1 .line2 {
+    display: block;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(0,229,255,0.6);
+  }
+
+  .hero-desc {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.8;
+    max-width: 560px;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.5s forwards;
+  }
+
+  .hero-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.65s forwards;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.25s;
+    cursor: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 700;
+  }
+  .btn-primary:hover {
+    background: #fff;
+    box-shadow: 0 0 30px rgba(0,229,255,0.4);
+    transform: translateY(-2px);
+  }
+  .btn-secondary {
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    background: transparent;
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .hero-stats {
+    position: absolute;
+    right: 4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    opacity: 0;
+    animation: fadeIn 1s 1s forwards;
+  }
+  .stat {
+    text-align: right;
+    border-right: 2px solid var(--border);
+    padding-right: 1.5rem;
+  }
+  .stat-num {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+  }
+
+  /* SECTION COMMON */
+  section {
+    padding: 6rem 4rem;
+    position: relative;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3.5rem;
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+  }
+  h2 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+  }
+
+  /* ABOUT */
+  #about { background: var(--bg2); }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  .about-text p {
+    font-family: var(--mono);
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    line-height: 1.9;
+    margin-bottom: 1.2rem;
+  }
+  .about-text p strong { color: var(--accent); font-weight: 400; }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .skill-group {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+    border-radius: 4px;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .skill-group:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+  .skill-group-title {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .skill-tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    background: rgba(0,229,255,0.05);
+    border: 1px solid rgba(0,229,255,0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+  }
+
+  /* PROJECTS */
+  #projects { background: var(--bg); }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  .project-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+    cursor: none;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .project-card:hover {
+    border-color: rgba(0,229,255,0.3);
+    transform: translateY(-4px);
+  }
+  .project-card:hover::before { transform: scaleX(1); }
+
+  .project-card:nth-child(2)::before { background: linear-gradient(to right, var(--accent2), var(--accent3)); }
+  .project-card:nth-child(3)::before { background: linear-gradient(to right, var(--accent3), var(--accent)); }
+  .project-card:nth-child(4)::before { background: linear-gradient(to right, var(--accent), var(--accent3)); }
+
+  .project-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+  .project-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+  .project-org {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    letter-spacing: 0.08em;
+  }
+  .project-desc {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .project-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .project-skill {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--accent);
+    background: rgba(0,229,255,0.06);
+    border: 1px solid rgba(0,229,255,0.15);
+    padding: 0.2rem 0.55rem;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+  }
+
+  /* EXPERIENCE */
+  #experience { background: var(--bg2); }
+  .exp-list { display: flex; flex-direction: column; gap: 2rem; }
+  .exp-item {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 3rem;
+    padding: 2rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: border-color 0.25s;
+  }
+  .exp-item:hover { border-color: rgba(0,229,255,0.3); }
+  .exp-meta {}
+  .exp-date {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+  .exp-company {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .exp-type {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+  }
+  .exp-content {}
+  .exp-role {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+  .exp-desc {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.85;
+    margin-bottom: 1rem;
+  }
+  .exp-skills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .exp-skill {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 0.2rem 0.55rem;
+    border-radius: 2px;
+  }
+
+  /* EDUCATION */
+  #education { background: var(--bg); }
+  .edu-list { display: flex; flex-direction: column; gap: 1.5rem; }
+  .edu-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 2rem;
+    padding: 1.75rem 2rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .edu-item:hover {
+    border-color: rgba(0,229,255,0.3);
+    transform: translateX(6px);
+  }
+  .edu-degree {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .edu-uni {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+  .edu-period {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+  .edu-grade {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent2);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* CONTACT */
+  #contact {
+    background: var(--bg2);
+    text-align: center;
+  }
+  .contact-inner { max-width: 600px; margin: 0 auto; }
+  .contact-title {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    line-height: 1;
+  }
+  .contact-title span {
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(0,229,255,0.5);
+  }
+  .contact-sub {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+  }
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    transition: all 0.25s;
+  }
+  .contact-item:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 1.5rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer p {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+  footer span { color: var(--accent); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 4rem 1.5rem; }
+    #hero { padding: 6rem 1.5rem 3rem; }
+    .hero-stats { display: none; }
+    .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+    .edu-item { grid-template-columns: 1fr; }
+    .edu-grade { text-align: left; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">KPK_</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Embedded Systems · Control · IoT</div>
+    <h1>Krishna Praveen<br><span class="line2">Kasilingam</span></h1>
+    <p class="hero-desc">
+      Embedded & Control Systems Engineer building real-time systems,<br>
+      wearable IoT devices, and intelligent embedded ML solutions.<br>
+      MSc @ University of Leicester · Open to Graduate Roles.
+    </p>
+    <div class="hero-links">
+      <a href="#projects" class="btn btn-primary">View Projects</a>
+      <a href="mailto:krishnapraveenka@gmail.com" class="btn btn-secondary">Get In Touch</a>
+      <a href="https://linkedin.com/in/krishna-praveen-k" target="_blank" class="btn btn-secondary">LinkedIn</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Projects</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Universities</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">7.94</div>
+      <div class="stat-label">Current GPA</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-num">// 01</span>
+    <h2>About</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>I'm an <strong>embedded and control systems engineer</strong> completing my MSc at the University of Leicester, with a focus on real-time embedded software, intelligent wearable systems, and control system modelling.</p>
+      <p>My recent work spans the full embedded stack — from <strong>STM32 firmware and BLE connectivity</strong> to on-device machine learning inference and signal processing pipelines. I care about building systems that are not just functional, but reliable and efficient in constrained environments.</p>
+      <p>Previously, I completed a <strong>PgCert in Gun Systems Design</strong> at Cranfield University, giving me grounding in systems engineering and safety-critical design. I'm fluent in Tamil, English (C1), and Hindi.</p>
+      <p>Currently seeking <strong>graduate roles or internships</strong> in embedded systems, control engineering, and IoT — UK-based or remote.</p>
+    </div>
+    <div class="skills-grid reveal">
+      <div class="skill-group">
+        <div class="skill-group-title">Languages</div>
+        <div class="skill-tags">
+          <span class="skill-tag">C</span>
+          <span class="skill-tag">C++</span>
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">MATLAB</span>
+          <span class="skill-tag">Ladder Logic</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">Hardware & MCUs</div>
+        <div class="skill-tags">
+          <span class="skill-tag">STM32</span>
+          <span class="skill-tag">Arduino</span>
+          <span class="skill-tag">BLE</span>
+          <span class="skill-tag">PCB Design</span>
+          <span class="skill-tag">IMU Sensors</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">Tools & Platforms</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Simulink</span>
+          <span class="skill-tag">PLECS</span>
+          <span class="skill-tag">STM32CubeIDE</span>
+          <span class="skill-tag">CREO</span>
+          <span class="skill-tag">AutoCAD</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">Domains</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Embedded ML</span>
+          <span class="skill-tag">IoT</span>
+          <span class="skill-tag">Signal Processing</span>
+          <span class="skill-tag">Computer Vision</span>
+          <span class="skill-tag">Control Systems</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header reveal">
+    <span class="section-num">// 02</span>
+    <h2>Projects</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-grid">
+
+    <div class="project-card reveal">
+      <div class="project-num">PROJECT_01</div>
+      <div class="project-title">Wearable Embedded ML-Based Fall Detection System</div>
+      <div class="project-org">University of Leicester · 2025–2026</div>
+      <p class="project-desc">Designed and developed a wearable embedded system for real-time fall detection, combining on-device machine learning with BLE wireless connectivity. Implemented motion classification algorithms trained on IMU sensor data, with a full signal processing and inference pipeline running on an STM32 microcontroller. Focused on low-power design principles to ensure reliable, continuous monitoring in a wearable form factor.</p>
+      <div class="project-skills">
+        <span class="project-skill">STM32</span>
+        <span class="project-skill">Embedded ML</span>
+        <span class="project-skill">C/C++</span>
+        <span class="project-skill">BLE</span>
+        <span class="project-skill">IMU Sensors</span>
+        <span class="project-skill">Signal Processing</span>
+        <span class="project-skill">Python</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-num">PROJECT_02</div>
+      <div class="project-title">Vibroacoustic Sensor System</div>
+      <div class="project-org">Cranfield University · 2022–2023</div>
+      <p class="project-desc">Built a low-cost vibration sensing platform using piezoelectric sensors and Arduino for structural health monitoring applications. Designed signal conditioning circuitry to improve measurement accuracy, developed real-time monitoring logic, and performed experimental validation and sensor calibration. Demonstrated how affordable hardware can deliver reliable vibration data for engineering analysis.</p>
+      <div class="project-skills">
+        <span class="project-skill">Arduino</span>
+        <span class="project-skill">Piezoelectric Sensors</span>
+        <span class="project-skill">Signal Conditioning</span>
+        <span class="project-skill">PCB Design</span>
+        <span class="project-skill">Calibration</span>
+        <span class="project-skill">Embedded C</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-num">PROJECT_03</div>
+      <div class="project-title">Quadruped Robot Control System</div>
+      <div class="project-org">SRM University · 2018–2022</div>
+      <p class="project-desc">Developed embedded motion-control algorithms for a four-legged robot, integrating sensors and actuators to achieve stable, coordinated movement. Contributed to mechanical design using CAD tools and iteratively tuned control logic through systematic debugging and testing. Deepened practical understanding of the interplay between hardware design and embedded software in robotic systems.</p>
+      <div class="project-skills">
+        <span class="project-skill">Arduino</span>
+        <span class="project-skill">Motion Control</span>
+        <span class="project-skill">Sensor Integration</span>
+        <span class="project-skill">CREO / AutoCAD</span>
+        <span class="project-skill">Control Systems</span>
+        <span class="project-skill">Debugging</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-num">PROJECT_04</div>
+      <div class="project-title">Vehicle Number Plate Recognition System</div>
+      <div class="project-org">Machine Learning Internship · Experts Hub · 2020</div>
+      <p class="project-desc">Built a computer vision pipeline for automatic vehicle number plate detection and recognition using OpenCV, achieving 85% detection accuracy on test data. Collaborated on hardware-software integration to deploy the model in a real-world capture environment. An early hands-on introduction to applied ML and end-to-end image processing pipelines.</p>
+      <div class="project-skills">
+        <span class="project-skill">Python</span>
+        <span class="project-skill">OpenCV</span>
+        <span class="project-skill">Computer Vision</span>
+        <span class="project-skill">Image Processing</span>
+        <span class="project-skill">Machine Learning</span>
+        <span class="project-skill">85% Accuracy</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-header reveal">
+    <span class="section-num">// 03</span>
+    <h2>Experience</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="exp-list">
+
+    <div class="exp-item reveal">
+      <div class="exp-meta">
+        <div class="exp-date">Jan 2024 – Dec 2024</div>
+        <div class="exp-company">Thulirs Public School</div>
+        <div class="exp-type">Full-time</div>
+      </div>
+      <div class="exp-content">
+        <div class="exp-role">Maths & Science Teacher</div>
+        <p class="exp-desc">Delivered Mathematics and Science lessons to secondary-level students, simplifying complex technical concepts into clear, engaging content. Managed classroom dynamics for groups of varying abilities, building strong communication, leadership, and organisational skills. Designed structured lesson plans and assessments, developing a disciplined approach to breaking down problems methodically — a skillset directly transferable to technical documentation and engineering communication.</p>
+        <div class="exp-skills">
+          <span class="exp-skill">Technical Communication</span>
+          <span class="exp-skill">Leadership</span>
+          <span class="exp-skill">Analytical Thinking</span>
+          <span class="exp-skill">Problem Solving</span>
+          <span class="exp-skill">Mentoring</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-meta">
+        <div class="exp-date">Aug 2020 – Sep 2020</div>
+        <div class="exp-company">Experts Hub</div>
+        <div class="exp-type">Internship</div>
+      </div>
+      <div class="exp-content">
+        <div class="exp-role">Machine Learning Intern</div>
+        <p class="exp-desc">Contributed to the development of machine learning and computer vision applications using Python and OpenCV. Assisted in building and debugging image-processing pipelines, gaining hands-on experience with real-world ML model development from data handling through to deployment. Collaborated with the engineering team on hardware-software integration, bridging the gap between software models and physical capture systems.</p>
+        <div class="exp-skills">
+          <span class="exp-skill">Python</span>
+          <span class="exp-skill">OpenCV</span>
+          <span class="exp-skill">Computer Vision</span>
+          <span class="exp-skill">Image Processing</span>
+          <span class="exp-skill">Machine Learning</span>
+          <span class="exp-skill">Debugging</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-header reveal">
+    <span class="section-num">// 04</span>
+    <h2>Education</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="edu-list">
+    <div class="edu-item reveal">
+      <div>
+        <div class="edu-degree">MSc Embedded and Control Systems Engineering</div>
+        <div class="edu-uni">University of Leicester, UK</div>
+        <div class="edu-period">Jan 2025 – May 2026 · In Progress</div>
+      </div>
+      <div class="edu-grade">CGPA 7.94/10</div>
+    </div>
+    <div class="edu-item reveal">
+      <div>
+        <div class="edu-degree">PgCert in Gun Systems Design</div>
+        <div class="edu-uni">Cranfield University, UK</div>
+        <div class="edu-period">Sep 2022 – Jul 2023</div>
+      </div>
+      <div class="edu-grade">2:2</div>
+    </div>
+    <div class="edu-item reveal">
+      <div>
+        <div class="edu-degree">B.Tech Electrical and Electronics Engineering</div>
+        <div class="edu-uni">SRM University, India</div>
+        <div class="edu-period">Jun 2018 – May 2022</div>
+      </div>
+      <div class="edu-grade">CGPA 8.43/10<br><span style="font-size:0.6rem;color:var(--text-dim)">Distinction</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="contact-title reveal">Let's<br><span>Connect</span></div>
+    <p class="contact-sub reveal">I'm actively looking for graduate roles and internships in embedded systems, control engineering, and IoT. If you're hiring or want to collaborate, reach out.</p>
+    <div class="contact-links reveal">
+      <a href="mailto:krishnapraveenka@gmail.com" class="contact-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        krishnapraveenka@gmail.com
+      </a>
+      <a href="tel:+447778880830" class="contact-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 12 19.79 19.79 0 0 1 1 3.18a2 2 0 0 1 2-2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        +44 7778 880830
+      </a>
+      <a href="https://linkedin.com/in/krishna-praveen-k" target="_blank" class="contact-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        linkedin.com/in/krishna-praveen-k
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 <span>Krishna Praveen Kasilingam</span></p>
+  <p>Embedded Systems · Control Engineering · IoT</p>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animateCursor() {
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  document.querySelectorAll('a, button, .project-card, .skill-group, .exp-item, .edu-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px';
+      cursor.style.height = '20px';
+      ring.style.width = '50px';
+      ring.style.height = '50px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px';
+      cursor.style.height = '12px';
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+</script>
+</body>
+</html>

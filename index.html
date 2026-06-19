@@ -1261,18 +1261,24 @@
       <div class="project-num">PROJECT_02</div>
       <div class="project-title">Vibroacoustic Sensor System</div>
       <div class="project-org">Cranfield University · 2022–2023</div>
-      <p class="project-desc">Built a low-cost vibration sensing platform using piezoelectric sensors and Arduino for structural health monitoring applications. Designed signal conditioning circuitry to improve measurement accuracy, developed real-time monitoring logic, and performed experimental validation and sensor calibration.</p>
+      <p class="project-desc">Built a low-cost dual-channel vibration sensing platform using piezoelectric sensors and an Arduino MKR WiFi for structural health monitoring applications. The system streams real-time sensor data wirelessly over UDP to a MATLAB/Simulink model on a host PC for signal processing, analysis and visualisation. Designed signal conditioning circuitry to improve measurement accuracy and performed experimental validation and calibration.</p>
       <div class="project-skills">
-        <span class="project-skill">Arduino</span><span class="project-skill">Piezoelectric Sensors</span><span class="project-skill">Signal Conditioning</span><span class="project-skill">PCB Design</span><span class="project-skill">Calibration</span><span class="project-skill">Embedded C</span>
+        <span class="project-skill">Arduino</span><span class="project-skill">Piezoelectric Sensors</span><span class="project-skill">WiFi UDP</span><span class="project-skill">MATLAB/Simulink</span><span class="project-skill">Signal Conditioning</span><span class="project-skill">Calibration</span><span class="project-skill">Embedded C</span>
       </div>
       <button class="project-toggle" onclick="toggleExpand(this)">
         <span>View Details</span><span class="toggle-arrow">▾</span>
       </button>
       <div class="project-expand">
         <div class="expand-inner">
+          <div class="expand-label">Gallery</div>
+          <div class="project-gallery">
+            <img src="images/vibro_1.jpg" alt="Vibroacoustic hardware setup">
+            <img src="images/vibro_2.jpg" alt="Simulink scope output">
+          </div>
           <div class="expand-label">Key Outcomes</div>
           <ul class="outcome-list">
-            <li>Designed and assembled a low-cost piezoelectric sensing platform from scratch</li>
+            <li>Built a dual-channel wireless vibration sensing platform using low-cost hardware</li>
+            <li>Implemented real-time UDP streaming over WiFi from the Arduino to MATLAB/Simulink</li>
             <li>Developed signal conditioning circuitry to filter noise and improve measurement fidelity</li>
             <li>Validated system accuracy through systematic calibration and experimental testing</li>
             <li>Demonstrated that affordable hardware can deliver reliable structural health monitoring data</li>
